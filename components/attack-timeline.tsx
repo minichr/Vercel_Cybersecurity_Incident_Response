@@ -25,7 +25,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
   const timelineEvents: TimelineEvent[] = [
     {
       id: "1",
-      time: "14:25:18",
+      time: "Jan 15, 2024 at 2:25:18 PM EST",
       title: "Initial Detection",
       description: "Suspicious svchost.exe process detected with unusual behavior",
       severity: "medium",
@@ -34,7 +34,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "2",
-      time: "14:25:20",
+      time: "Jan 15, 2024 at 2:25:20 PM EST",
       title: "Malware Deployment",
       description: "Malicious executable dropped in system32 directory",
       severity: "high",
@@ -43,7 +43,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "3",
-      time: "14:25:21",
+      time: "Jan 15, 2024 at 2:25:21 PM EST",
       title: "Persistence Established",
       description: "Registry modification for startup persistence",
       severity: "high",
@@ -52,7 +52,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "4",
-      time: "14:27:30",
+      time: "Jan 15, 2024 at 2:27:30 PM EST",
       title: "DNS Resolution",
       description: "Malicious domain c2-server.malicious-domain.com resolved",
       severity: "medium",
@@ -61,7 +61,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "5",
-      time: "14:28:42",
+      time: "Jan 15, 2024 at 2:28:42 PM EST",
       title: "Threat Confirmed",
       description: "File hash matched known Trojan.Win32.Agent.ABC signature",
       severity: "critical",
@@ -70,7 +70,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "6",
-      time: "14:30:05",
+      time: "Jan 15, 2024 at 2:30:05 PM EST",
       title: "Boot Persistence",
       description: "Boot execution order modified for persistence",
       severity: "high",
@@ -79,7 +79,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "7",
-      time: "14:32:15",
+      time: "Jan 15, 2024 at 2:32:15 PM EST",
       title: "C2 Communication",
       description: "Active command & control communication established",
       severity: "critical",
@@ -88,7 +88,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "8",
-      time: "14:32:45",
+      time: "Jan 15, 2024 at 2:32:45 PM EST",
       title: "Data Exfiltration",
       description: "500MB of data transferred to external server",
       severity: "critical",
@@ -97,7 +97,7 @@ export default function AttackTimeline({ status }: AttackTimelineProps) {
     },
     {
       id: "9",
-      time: "14:34:30",
+      time: "Jan 15, 2024 at 2:34:30 PM EST",
       title: "File Encryption",
       description: "1,247 files encrypted with ransomware payload",
       severity: "critical",

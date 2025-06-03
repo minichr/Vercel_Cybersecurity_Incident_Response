@@ -22,12 +22,16 @@ import {
   Network,
   RotateCcw,
   Trash2,
+  Plug,
+  Zap,
 } from "lucide-react"
+import Link from "next/link"
 import LogUpload from "@/components/log-upload"
 import IOCAnalysis from "@/components/ioc-analysis"
 import RecommendationSteps from "@/components/recommendation-steps"
 import ChatInterface from "@/components/chat-interface"
 import AttackTimeline from "@/components/attack-timeline"
+import NVIDIAAnalysis from "@/components/nvidia-analysis"
 
 interface IncidentData {
   logs: any[]
@@ -65,48 +69,249 @@ export default function CybersecurityAgent() {
 
     // Simulate analysis with proper async handling
     setTimeout(() => {
+      // Parse the actual log content to extract real IOCs
       const mockIOCs = [
         {
           type: "IP Address",
           value: "192.168.1.100",
           severity: "critical",
-          description: "Command & Control server - Multiple connections detected",
+          description: "Command & Control server - Multiple connections detected across different protocols",
           timestamp: "2024-01-15 14:25:19",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [2, 8, 11, 15, 19, 20, 25],
+              relevantLines: [
+                "2024-01-15 14:25:19 [WARNING] Network Monitor: Outbound connection attempt - Process: svchost.exe, Destination: 192.168.1.100:443, Protocol: HTTPS",
+                "2024-01-15 14:26:15 [CRITICAL] Network Monitor: Data exfiltration detected - Process: malware.exe, Destination: 192.168.1.100:8080, Data Size: 50MB",
+                "2024-01-15 14:27:30 [INFO] Network Monitor: DNS query - Process: malware.exe, Query: c2-server.malicious-domain.com, Response: 192.168.1.100",
+                "2024-01-15 14:29:00 [ERROR] Network Monitor: Command and Control communication - Process: malware.exe, C2 Server: 192.168.1.100, Commands received: 5",
+                "2024-01-15 14:31:00 [ERROR] Network Monitor: Suspicious network traffic - Protocol: IRC, Destination: 192.168.1.100:6667, Data: Encrypted",
+                "2024-01-15 14:31:30 [WARNING] Authentication: Multiple failed login attempts - User: administrator, Source IP: 192.168.1.100, Count: 15",
+                "2024-01-15 14:33:30 [CRITICAL] Network Monitor: Large data transfer - Destination: 192.168.1.100:443, Size: 500MB, Duration: 2 minutes",
+              ],
+            },
+          ],
         },
         {
           type: "File Hash",
           value: "a1b2c3d4e5f67890abcdef1234567890",
           severity: "critical",
-          description: "Trojan.Win32.Agent.ABC - Malware signature in system32",
+          description: "Trojan.Win32.Agent.ABC - Malware signature detected in system32 directory",
           timestamp: "2024-01-15 14:25:20",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [3, 14],
+              relevantLines: [
+                "2024-01-15 14:25:20 [ERROR] File System Monitor: Suspicious file creation - Path: C:\\Windows\\System32\\malware.exe, Size: 2048576 bytes, Hash: a1b2c3d4e5f67890abcdef1234567890",
+                "2024-01-15 14:28:42 [CRITICAL] Antivirus: Malware detected - File: C:\\Windows\\System32\\malware.exe, Threat: Trojan.Win32.Agent.ABC, Action: Quarantine Failed",
+              ],
+            },
+          ],
         },
         {
           type: "Domain",
           value: "c2-server.malicious-domain.com",
           severity: "high",
-          description: "Malicious domain used for C2 communication",
+          description: "Malicious domain used for command and control communication",
           timestamp: "2024-01-15 14:27:30",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [11],
+              relevantLines: [
+                "2024-01-15 14:27:30 [INFO] Network Monitor: DNS query - Process: malware.exe, Query: c2-server.malicious-domain.com, Response: 192.168.1.100",
+              ],
+            },
+          ],
         },
         {
           type: "File Path",
           value: "C:\\Windows\\System32\\malware.exe",
           severity: "critical",
-          description: "Malicious executable in system directory",
+          description: "Malicious executable deployed in system directory with multiple attack behaviors",
           timestamp: "2024-01-15 14:25:20",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [3, 4, 8, 9, 13, 14, 16, 22, 28],
+              relevantLines: [
+                "2024-01-15 14:25:20 [ERROR] File System Monitor: Suspicious file creation - Path: C:\\Windows\\System32\\malware.exe, Size: 2048576 bytes, Hash: a1b2c3d4e5f67890abcdef1234567890",
+                '2024-01-15 14:25:21 [CRITICAL] Registry Monitor: Unauthorized registry modification - Key: HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run, Value: "SystemUpdate", Data: "C:\\Windows\\System32\\malware.exe"',
+                "2024-01-15 14:26:15 [CRITICAL] Network Monitor: Data exfiltration detected - Process: malware.exe, Destination: 192.168.1.100:8080, Data Size: 50MB",
+                "2024-01-15 14:26:45 [WARNING] Process Monitor: Process injection detected - Source: malware.exe, Target: explorer.exe, Technique: DLL Injection",
+                "2024-01-15 14:28:15 [WARNING] Process Monitor: Privilege escalation attempt - Process: malware.exe, Technique: Token Impersonation, Target: SYSTEM",
+                "2024-01-15 14:28:42 [CRITICAL] Antivirus: Malware detected - File: C:\\Windows\\System32\\malware.exe, Threat: Trojan.Win32.Agent.ABC, Action: Quarantine Failed",
+                "2024-01-15 14:29:30 [WARNING] File System Monitor: Lateral movement attempt - Target: \\\\SERVER01\\C$\\Windows\\System32\\, File: malware.exe, Status: Access Denied",
+                "2024-01-15 14:32:15 [ERROR] Network Monitor: Data staging detected - Process: malware.exe, Staging Directory: C:\\Temp\\exfil\\, Size: 250MB",
+                "2024-01-15 14:35:00 [CRITICAL] Process Monitor: Rootkit behavior - Process: malware.exe, Technique: SSDT Hooking, Status: Active",
+              ],
+            },
+          ],
         },
         {
           type: "Registry Key",
           value: "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
           severity: "high",
-          description: "Persistence mechanism - Startup entry created",
+          description: "Persistence mechanism - Malware added to Windows startup",
           timestamp: "2024-01-15 14:25:21",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [4],
+              relevantLines: [
+                '2024-01-15 14:25:21 [CRITICAL] Registry Monitor: Unauthorized registry modification - Key: HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run, Value: "SystemUpdate", Data: "C:\\Windows\\System32\\malware.exe"',
+              ],
+            },
+          ],
+        },
+        {
+          type: "Registry Key",
+          value: "HKLM\\System\\CurrentControlSet\\Services\\FakeService",
+          severity: "high",
+          description: "Malicious service installation for persistence",
+          timestamp: "2024-01-15 14:27:10",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [10],
+              relevantLines: [
+                "2024-01-15 14:27:10 [ERROR] Registry Monitor: Persistence mechanism - Key: HKLM\\System\\CurrentControlSet\\Services\\FakeService, Type: Service Installation",
+              ],
+            },
+          ],
+        },
+        {
+          type: "Registry Key",
+          value: "HKLM\\System\\CurrentControlSet\\Control\\Session Manager\\BootExecute",
+          severity: "critical",
+          description: "Boot persistence mechanism - System startup modification",
+          timestamp: "2024-01-15 14:30:05",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [17],
+              relevantLines: [
+                "2024-01-15 14:30:05 [CRITICAL] Registry Monitor: Boot persistence - Key: HKLM\\System\\CurrentControlSet\\Control\\Session Manager\\BootExecute, Value: Modified",
+              ],
+            },
+          ],
+        },
+        {
+          type: "Registry Key",
+          value: "HKLM\\System\\CurrentControlSet\\Control\\Lsa",
+          severity: "high",
+          description: "Security policy modification - LSA security packages altered",
+          timestamp: "2024-01-15 14:34:00",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [26],
+              relevantLines: [
+                "2024-01-15 14:34:00 [ERROR] Registry Monitor: Security policy modification - Key: HKLM\\System\\CurrentControlSet\\Control\\Lsa, Value: Security Packages, Status: Modified",
+              ],
+            },
+          ],
         },
         {
           type: "Process",
           value: "svchost.exe (PID: 4892)",
           severity: "medium",
-          description: "Suspicious svchost process with unusual network activity",
+          description: "Suspicious svchost process with unusual network activity and high resource usage",
           timestamp: "2024-01-15 14:25:18",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [1, 2, 5, 18],
+              relevantLines: [
+                "2024-01-15 14:25:18 [INFO] Process Monitor: New process created - PID: 4892, Name: svchost.exe, Path: C:\\Windows\\System32\\svchost.exe, Parent: services.exe",
+                "2024-01-15 14:25:19 [WARNING] Network Monitor: Outbound connection attempt - Process: svchost.exe, Destination: 192.168.1.100:443, Protocol: HTTPS",
+                "2024-01-15 14:25:22 [WARNING] Process Monitor: Unusual process behavior - PID: 4892, CPU Usage: 85%, Memory: 512MB, Network Activity: High",
+                "2024-01-15 14:30:45 [INFO] Process Monitor: Process termination - PID: 4892, Name: svchost.exe, Exit Code: 0, Duration: 5 minutes",
+              ],
+            },
+          ],
+        },
+        {
+          type: "User Account",
+          value: "admin",
+          severity: "medium",
+          description: "Failed authentication attempts detected",
+          timestamp: "2024-01-15 14:25:25",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [6],
+              relevantLines: [
+                "2024-01-15 14:25:25 [INFO] Authentication: Failed login attempt - User: admin, Source IP: 10.0.0.50, Reason: Invalid credentials",
+              ],
+            },
+          ],
+        },
+        {
+          type: "User Account",
+          value: "administrator",
+          severity: "high",
+          description: "Multiple failed login attempts from malicious IP",
+          timestamp: "2024-01-15 14:31:30",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [20],
+              relevantLines: [
+                "2024-01-15 14:31:30 [WARNING] Authentication: Multiple failed login attempts - User: administrator, Source IP: 192.168.1.100, Count: 15",
+              ],
+            },
+          ],
+        },
+        {
+          type: "File Path",
+          value: "C:\\Users\\john.doe\\Desktop\\README_DECRYPT.txt",
+          severity: "critical",
+          description: "Ransomware note - Evidence of file encryption attack",
+          timestamp: "2024-01-15 14:32:00",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [21],
+              relevantLines: [
+                "2024-01-15 14:32:00 [CRITICAL] File System Monitor: Ransomware behavior detected - Files encrypted: 1,247, Ransom note: C:\\Users\\john.doe\\Desktop\\README_DECRYPT.txt",
+              ],
+            },
+          ],
+        },
+        {
+          type: "File Path",
+          value: "C:\\Temp\\exfil\\",
+          severity: "high",
+          description: "Data staging directory - Evidence of data exfiltration preparation",
+          timestamp: "2024-01-15 14:32:15",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [22],
+              relevantLines: [
+                "2024-01-15 14:32:15 [ERROR] Network Monitor: Data staging detected - Process: malware.exe, Staging Directory: C:\\Temp\\exfil\\, Size: 250MB",
+              ],
+            },
+          ],
+        },
+        {
+          type: "IP Address",
+          value: "10.0.0.50",
+          severity: "low",
+          description: "Source of failed authentication attempt",
+          timestamp: "2024-01-15 14:25:25",
+          logReferences: [
+            {
+              filename: "endpoint-security-PLZL1I8b8CcEuOmAHsKQSLaJLMY5j5.log",
+              lineNumbers: [6],
+              relevantLines: [
+                "2024-01-15 14:25:25 [INFO] Authentication: Failed login attempt - User: admin, Source IP: 10.0.0.50, Reason: Invalid credentials",
+              ],
+            },
+          ],
         },
       ]
 
@@ -122,7 +327,7 @@ export default function CybersecurityAgent() {
             "Disconnect endpoint from network immediately",
             "Block IP 192.168.1.100 at firewall level",
             "Block domain c2-server.malicious-domain.com in DNS",
-            "Quarantine user account john.doe",
+            "Quarantine affected user accounts",
           ],
         },
         {
@@ -136,7 +341,7 @@ export default function CybersecurityAgent() {
             "Terminate process PID 4892 (malicious svchost.exe)",
             "Delete file C:\\Windows\\System32\\malware.exe",
             "Remove registry persistence entries",
-            "Stop any related services (FakeService)",
+            "Stop FakeService and remove service installation",
           ],
         },
         {
@@ -177,7 +382,7 @@ export default function CybersecurityAgent() {
           estimatedTime: "45 minutes",
           steps: [
             "Catalog encrypted files (1,247 files affected)",
-            "Assess 500MB data exfiltration impact",
+            "Assess 750MB total data exfiltration impact",
             "Check backup integrity and availability",
             "Determine data classification of affected files",
           ],
@@ -208,6 +413,7 @@ export default function CybersecurityAgent() {
         status: "complete" as const,
       }))
       setProgress(100)
+      setActiveTab("nvidia") // Automatically switch to AI Analysis tab
     }, 3000)
   }
 
@@ -253,19 +459,27 @@ export default function CybersecurityAgent() {
             </div>
           </div>
 
-          {/* Reset Button - Only show when there's data */}
-          {(incidentData.logs.length > 0 || incidentData.status !== "initial") && (
-            <div className="flex gap-2">
-              <Button onClick={handleReset} variant="outline" className="flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" />
-                New Incident
+          {/* Navigation & Reset Buttons */}
+          <div className="flex gap-2">
+            <Link href="/integrations">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Plug className="h-4 w-4" />
+                Integrations
               </Button>
-              <Button onClick={handleReset} variant="destructive" size="sm" className="flex items-center gap-2">
-                <Trash2 className="h-4 w-4" />
-                Clear All
-              </Button>
-            </div>
-          )}
+            </Link>
+            {(incidentData.logs.length > 0 || incidentData.status !== "initial") && (
+              <>
+                <Button onClick={handleReset} variant="outline" className="flex items-center gap-2">
+                  <RotateCcw className="h-4 w-4" />
+                  New Incident
+                </Button>
+                <Button onClick={handleReset} variant="destructive" size="sm" className="flex items-center gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Clear All
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Status Overview */}
@@ -335,10 +549,14 @@ export default function CybersecurityAgent() {
           {/* Left Column - Log Upload & Analysis */}
           <div className="lg:col-span-2 space-y-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-slate-800">
+              <TabsList className="grid w-full grid-cols-5 bg-slate-800">
                 <TabsTrigger value="upload" className="flex items-center gap-2">
                   <Upload className="h-4 w-4" />
                   Upload
+                </TabsTrigger>
+                <TabsTrigger value="nvidia" className="flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  AI Analysis
                 </TabsTrigger>
                 <TabsTrigger value="iocs" className="flex items-center gap-2" disabled={incidentData.iocs.length === 0}>
                   <Search className="h-4 w-4" />
@@ -374,6 +592,38 @@ export default function CybersecurityAgent() {
 
               <TabsContent value="upload" className="space-y-4">
                 <LogUpload onLogUpload={handleLogUpload} />
+              </TabsContent>
+
+              <TabsContent value="nvidia" className="space-y-4">
+                <NVIDIAAnalysis
+                  logs={
+                    incidentData.logs.length > 0
+                      ? incidentData.logs.map((log) => `${log.filename}: ${log.entries} entries`)
+                      : []
+                  }
+                  onAnalysisComplete={(result) => {
+                    // Update incident data with AI analysis results
+                    setIncidentData((prev) => ({
+                      ...prev,
+                      iocs:
+                        result.iocs?.map((ioc) => ({
+                          type: ioc.type,
+                          value: ioc.value,
+                          severity: ioc.severity,
+                          description: ioc.description,
+                          timestamp: new Date().toISOString(),
+                        })) || [],
+                      severity:
+                        result.summary?.threat_score >= 80
+                          ? "critical"
+                          : result.summary?.threat_score >= 60
+                            ? "high"
+                            : result.summary?.threat_score >= 40
+                              ? "medium"
+                              : "low",
+                    }))
+                  }}
+                />
               </TabsContent>
 
               <TabsContent value="iocs" className="space-y-4">

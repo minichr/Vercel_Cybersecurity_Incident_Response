@@ -122,10 +122,10 @@ The incident severity is **HIGH** based on the presence of active C2 communicati
       return {
         content: `**Attack Timeline Reconstruction**:
 
-14:25:18 - Initial compromise detected (suspicious process execution)
-14:28:42 - Malware deployment (file hash matched threat database)
-14:30:05 - Persistence established (registry modification)
-14:32:15 - C2 communication initiated (outbound connection to 192.168.1.100)
+14:25:18 EST - Initial compromise detected (suspicious process execution)
+14:28:42 EST - Malware deployment (file hash matched threat database)
+14:30:05 EST - Persistence established (registry modification)
+14:32:15 EST - C2 communication initiated (outbound connection to 192.168.1.100)
 
 **Attack Vector**: Likely phishing email or drive-by download. The malware appears to be a Remote Access Trojan (RAT) with data exfiltration capabilities.`,
         suggestions: [
@@ -142,6 +142,18 @@ The incident severity is **HIGH** based on the presence of active C2 communicati
 The detected IOCs suggest an active threat that requires prompt response. Would you like me to guide you through the specific containment steps or provide more details about the threat indicators?`,
       suggestions: ["Show containment steps", "Explain the IOCs", "What's the next priority?"],
     }
+  }
+
+  const formatTimestamp = (timestamp: Date) => {
+    return timestamp.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZoneName: "short",
+    })
   }
 
   return (
@@ -177,7 +189,7 @@ The detected IOCs suggest an active threat that requires prompt response. Would 
                         }`}
                       >
                         <div className="whitespace-pre-wrap text-sm">{message.content}</div>
-                        <div className="text-xs opacity-70 mt-1">{message.timestamp.toLocaleTimeString()}</div>
+                        <div className="text-xs opacity-70 mt-1">{formatTimestamp(message.timestamp)}</div>
                       </div>
                     </div>
                   </div>
@@ -275,7 +287,7 @@ The detected IOCs suggest an active threat that requires prompt response. Would 
 
           <div className="pt-2">
             <Badge variant="outline" className="text-xs">
-              Last Updated: {new Date().toLocaleTimeString()}
+              Last Updated: {formatTimestamp(new Date())}
             </Badge>
           </div>
         </CardContent>
